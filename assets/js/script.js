@@ -2,14 +2,13 @@
 let taskList = JSON.parse(localStorage.getItem("tasks"));
 let nextId = JSON.parse(localStorage.getItem("nextId"));
 
-// const timeDisplayEl = $('#time-display');
-// const projectDisplayEl = $('#project-display');
+// HTML elements
 const taskTitleEl = $('#task-title');
 const taskDescriptionEl = $('#task-description')
 const taskSubmitBtn = $('#task-submit')
 const taskDateInputEl = $('#due-date');
 
-
+// Read the task list from local storage, if none return empty array
 function readTasksFromStorage () {
     let tasks = JSON.parse(localStorage.getItem('tasks'))
 
@@ -20,16 +19,17 @@ function readTasksFromStorage () {
     return tasks
 }
 
+// Save tasks to local storage
 function saveTasksToStorage (tasks) {
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
-// Todo: create a function to generate a unique task id
+// Function to generate a unique task id
 function generateTaskId() {
     return Date.now();
 }
 
-// Todo: create a function to create a task card
+// Function to create a task card
 function createTaskCard(task) {
 
     const taskCard = $('<div>').addClass('card task-card draggable my-3').attr('data-task-id', task.id)
@@ -62,7 +62,7 @@ function createTaskCard(task) {
     return taskCard
 }
 
-// Todo: create a function to render the task list and make cards draggable
+// Function to render the task list and make cards draggable
 function renderTaskList() {
     const tasks = readTasksFromStorage()
 
@@ -88,9 +88,6 @@ function renderTaskList() {
         }
     }
 
-
-
-
     $('.draggable').draggable({
         opacity: 0.7,
         zIndex: 100,
@@ -108,7 +105,7 @@ function renderTaskList() {
       });
 }
 
-// Todo: create a function to handle adding a new task
+// Function to handle adding a new task
 function handleAddTask(event){
     event.preventDefault();
 
@@ -117,15 +114,12 @@ function handleAddTask(event){
     const taskDescription = taskDescriptionEl.val()
 
     const newTask = {
-    // ? Here we use a Web API called `crypto` to generate a random id for our project. This is a unique identifier that we can use to find the project in the array. `crypto` is a built-in module that we can use in the browser and Nodejs.    id: crypto.randomUUID(),
         id: generateTaskId(),
         title: taskTitle,
         description: taskDescription,
         dueDate: taskDueDate,
         status: 'to-do',
-    }   
-
-
+    }
 
     const tasks = readTasksFromStorage();
     tasks.push(newTask)
@@ -137,16 +131,12 @@ function handleAddTask(event){
     taskTitleEl.val('')
     taskDateInputEl.val('')
     taskDescriptionEl.val('')
-
-
 }
 
-// Todo: create a function to handle deleting a task
+// Function to handle deleting a task
 function handleDeleteTask(event){
     const taskId = $(this).attr('data-task-id');
     const tasks = readTasksFromStorage();
-
-
 
     tasks.forEach((task) => {
       if (task.id == taskId) {
@@ -156,49 +146,47 @@ function handleDeleteTask(event){
       }
     });
   
-    // ? We will use our helper function to save the projects to localStorage
     saveTasksToStorage(tasks);
   
-    // ? Here we use our other function to print projects back to the screen
     renderTaskList();
 }
 
-// Todo: create a function to handle dropping a task into a new status lane
+// Function to handle dropping a task into a new status lane
 function handleDrop(event, ui) {
 
   const tasks = readTasksFromStorage();
   
-  // ? Get the project id from the event
+  // Get the tasks id from the event
   const taskId = ui.draggable[0].dataset.taskId;
 
-  // ? Get the id of the lane that the card was dropped into
+  // Get the id of the lane that the card was dropped into
   const newStatus = event.target.id;
 
   for (let task of tasks) {
-    // ? Find the project card by the `id` and update the project status.
+    // Find the task card by the `id` and update the task status.
     if (task.id == taskId) {
       task.status = newStatus;
     }
   }
-  // ? Save the updated projects array to localStorage (overwritting the previous one) and render the new project data to the screen.
+  // Save the updated tasks array to localStorage (overwritting the previous one) and render the new tasks to the screen.
   localStorage.setItem('tasks', JSON.stringify(tasks));
   renderTaskList()
 }
 
 
-// Todo: when the page loads, render the task list, add event listeners, make lanes droppable, and make the due date field a date picker
+// On page load, render the task list, add event listener to 'add task' button, make lanes droppable, and make the due date field a date picker
 $(document).ready(function () {
     taskSubmitBtn.on('click', handleAddTask);
 
     renderTaskList()
 
-    taskDateInputEl.datepicker({
-      changeMonth: true,
-      changeYear: true,
-    });
-
     $('.lane').droppable({
         accept: '.draggable',
         drop: handleDrop,
       });
+
+    taskDateInputEl.datepicker({
+      changeMonth: true,
+      changeYear: true,
+    });
 });
