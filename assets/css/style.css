@@ -15,6 +15,8 @@ body {
     cursor: grab;
   }
 
+  /* End given css */
+
   .modal-body form {
     display: flex;
   }
@@ -25,7 +27,9 @@ body {
 
 
 
-
+  .model .form-group {
+    display: flex;
+  }
 
 
   .card-container {
